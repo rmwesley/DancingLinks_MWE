@@ -2,7 +2,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-//public class Column extends Node implements Iterable<Column>{
 public class Column extends Node {
 	private int size;
 	private String name;
@@ -25,6 +24,13 @@ public class Column extends Node {
 			currColumn = nextColumn;
 		}
 		currColumn.linkR(this);
+	}
+
+	public Column(int[][] matrix) throws Exception {
+		this(matrix[0].length);
+		for(int i = 0; i < matrix.length; i++){
+			this.addRow(matrix[i]);
+		}
 	}
 
 	public void addRow(int[] vector) throws Exception {
@@ -52,12 +58,6 @@ public class Column extends Node {
 			throw new Exception("Differ in length");
 		}
 	}
-	public Column(int[][] matrix) throws Exception {
-		this(matrix[0].length);
-		for(int i = 0; i < matrix.length; i++){
-			this.addRow(matrix[i]);
-		}
-	}
 
 	@Override
 	public Column getR(){
@@ -73,11 +73,8 @@ public class Column extends Node {
 	public String toString(){
 		String str = "";
 
-		//for (Column currColumn : this) str += currColumn.getSize() + " ";
-		for (Column currColumn = this.getR();
-				currColumn != this;
-				currColumn = currColumn.getR()){
-			str += currColumn.getSize() + " ";
+		for (Node currColumn : this) {
+			str += ((Column) currColumn).getSize() + " ";
 		}
 		return str;
 	}
@@ -105,76 +102,4 @@ public class Column extends Node {
 	public void decrement(){
 		this.size--;
 	}
-
-	public void cover(){
-		this.removeHoriz();
-		for (Node x = this.getD(); x != this; x = x.getD()) {
-			for (Node y = x.getR(); y != x; y = y.getR()) {
-				y.removeVert();
-				y.getColumn().size--;
-			}
-		}
-	}
-
-	public void uncover(){
-		for (Node x = this.getU(); x != this; x = x.getU()) {
-			for (Node y = x.getL(); y != x; y = y.getL()) {
-				y.restoreVert();
-				y.getColumn().size++;
-			}
-		}
-		this.restoreHoriz();
-	}
-
-	//Searches the column with the least amount of possible cover nodes
-	public Column leastCovers() {
-		Column argmin = this;
-		int i=0;
-
-		for (Column currColumn = (Column) this.getR();
-				currColumn != this;
-				currColumn = (Column) currColumn.getR()) {
-				//currColumn = (Column) currColumn.rightNode) {
-			System.out.println(currColumn);
-			System.out.println("" + i);
-			i++;
-			if (currColumn.getSize() < argmin.getSize()) {
-				argmin = currColumn;
-			}
-		}
-		return argmin;
-	}
-
-	// Return a set of all Solutions to the problem,
-	// where each solution is comprised of a set of nodes
-	HashSet<HashSet<Node>> exactCover() {
-		HashSet<HashSet<Node>> setOfSolutions =
-		   	new HashSet<HashSet<Node>>();
-		return setOfSolutions;
-	}
-
-	//Verifies if this is solved
-	boolean isSolved() {
-		return this.getR() == this;
-	}
-
-	/*
-	@Override
-	public Iterator<Column> iterator(){
-		return new Iterator<Column>(){
-			private Column currNode = Column.this;
-
-			@Override
-			public boolean hasNext(){
-				return currNode.getR() != Column.this;
-			}
-			@Override
-			public Column next(){
-				if (!hasNext()) throw new NoSuchElementException();
-				currNode = currNode.getR();
-				return currNode;
-			}
-		};
-	}
-	*/
 }

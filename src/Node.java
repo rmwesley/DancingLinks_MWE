@@ -24,8 +24,22 @@ public class Node implements Iterable<Node> {
 
 	@Override
 	public java.util.Iterator<Node> iterator(){
-		Node currNode = this;
-		return new NodeIter(this);
+		return new java.util.Iterator<Node>(){
+			private Node current = Node.this;
+
+			@Override
+			public boolean hasNext(){
+				return current.getR() != Node.this;
+			}
+			@Override
+			public Node next(){
+				if (!hasNext()) {
+					throw new java.util.NoSuchElementException();
+				}
+				current = current.getR();
+				return current;
+			}
+		};
 	}
 
 	public Column getColumn(){
