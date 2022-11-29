@@ -1,0 +1,2 @@
+#!/bin/bash
+java -XX:ConcGCThreads=1 -Xmx512m -cp .:bin/ Main
